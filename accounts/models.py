@@ -1,22 +1,20 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from phonenumber_field.modelfields import PhoneNumberField
+from .managers import UserManager
 
-class Client(models.Model):
+class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    phone_number = PhoneNumberField(blank=True, null=True, unique=True)
+    email = models.EmailField(blank=True, null=True, unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'phone_number'  # Used for authentication; can be None if using custom backend
+    REQUIRED_FIELDS = ['name']  # Name is required during creation
 
     def __str__(self):
         return self.name
-
-
-class Proposal(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='proposals')
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)
-    submitted_at = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.title} - {self.client.name}"
