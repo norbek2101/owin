@@ -1,0 +1,7 @@
+Django==5.2.1
+django-filter==25.1
+django-phonenumber-field==8.1.0
+djangorestframework==3.16.0
+djangorestframework_simplejwt==5.5.0
+pytest-django==4.11.1
+pillow==11.2.1
